@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- First page of a survey -->
+        <template id="survey.survey_init" name="Survey">
+            <t t-call="survey.layout">
+                <div class="wrap">
+                    <div class="oe_structure" id="oe_structure_survey_init_1"/>
+                    <div class="container">
+                        <t t-if="answer.test_entry" t-call="survey.back"/>
+                        <div class='jumbotron mt32'>
+                            <h1 t-field='survey.title'/>
+                            <div t-field='survey.description' class="oe_no_empty"/>
+                            <div t-if="survey.is_time_limited">
+                                <p>
+                                    <span>Time limit for this Test:</span>
+                                    <t t-if="survey.questions_time_option != 'each_question'">
+                                        <span class="font-weight-bold text-danger" t-field="survey.time_limit" t-options="{'widget': 'duration', 'unit': 'minute'}"></span>
+                                    </t>
+                                    <t t-if="survey.questions_time_option == 'each_question'">
+                                        <span class="font-weight-bold text-danger" t-esc="total_time_limit"></span>
+                                        <span>minutes.</span>
+                                        <br/>
+                                        <span class="font-weight-bold text-danger">Each Question has its own time.</span>
+                                        <t t-if="survey.questions_time_option == 'each_question' and survey.auto_next_ques">
+                                            <span class="font-weight-bold text-danger">After time limit reached for each question, you will be auto moved to next question.</span>
+                                        </t>
+                                        <t t-if="survey.questions_time_option == 'each_question' and not survey.auto_next_ques">
+                                            <span class="font-weight-bold text-danger">After time limit reached for each question, you will be allowed to answer the question.</span>
+                                        </t>
+                                    </t>
+                                </p>
+                            </div>
+                            <a role="button" class="btn btn-primary btn-lg" t-att-href="'/survey/fill/%s/%s' % (survey.access_token, answer.token)">
+                                <t t-if="survey.certificate">
+                                    Start Certification
+                                </t>
+                                <t t-else="">
+                                    Start Survey
+                                </t>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="oe_structure" id="oe_structure_survey_init_2"/>
+                </div>
+            </t>
+        </template>
+
+        <!-- A survey -->
+        <template id="survey.survey" name="Survey">
+            <t t-call="survey.layout">
+                <div class="wrap">
+                    <div class="oe_structure" id="oe_structure_survey_survey_1"/>
+                    <div class="container">
+                        <t t-if="answer.test_entry" t-call="survey.back"/>
+
+                        <t t-if="survey.questions_time_option != 'each_question'">
+                            <t t-call="survey.survey_header"/>
+                        </t>
+                        <t t-call="survey.page"/>
+                    </div>
+                    <div class="oe_structure" id="oe_structure_survey_survey_2"/>
+                </div>
+            </t>
+        </template>
+
+        <!-- The survey header -->
+        <template id="survey.survey_header" name="Header">
+            <div class="o_page_header o_survey_header">
+                <div class="container m-0 p-0">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h1 t-esc="survey.title"></h1>
+                        </div>
+                        <div
+                                t-if="survey.is_time_limited"
+                                class="js_survey_timer col-lg-4"
+                                t-att-data-questions_time_option="survey.questions_time_option"
+                                t-att-data-auto_next_ques="survey.auto_next_ques or False"
+                                t-att-data-timer="answer.start_datetime.isoformat()"
+                                t-att-data-time_limit_minutes="survey.time_limit">
+                            <h1 class="timer text-right">00:00</h1>
+                        </div>
+                    </div>
+                </div>
+                <ol t-if="survey.questions_layout == 'page_per_section'" class="breadcrumb mt8 justify-content-end">
+                    <t t-set="can_go_back" t-value="survey.users_can_go_back"/>
+                    <t t-foreach='survey.page_ids' t-as='breadcrumb_page'>
+                        <li t-attf-class="breadcrumb-item #{'active' if breadcrumb_page == page else ''}">
+                            <t t-if="page == breadcrumb_page">
+                                <!-- Users can only go back and not forward -->
+                                <!-- As soon as we reach the current page, set "can_go_back" to False -->
+                                <t t-set="can_go_back" t-value="False"/>
+                            </t>
+                            <t t-if="can_go_back">
+                                <a t-att-href="'/survey/page/%s/%s/%s' % (survey.access_token, answer.token, breadcrumb_page.id)">
+                                    <span t-field='breadcrumb_page.title'/>
+                                </a>
+                            </t>
+                            <t t-else="">
+                                <span t-field='breadcrumb_page.title'/>
+                            </t>
+                        </li>
+                    </t>
+                </ol>
+            </div>
+        </template>
+
+
+        <!-- A page -->
+        <template id="survey.page" name="Page">
+            <t t-if="survey.questions_layout == 'one_page'" t-set="page_or_question_id" t-value="None"/>
+            <t t-if="survey.questions_layout == 'page_per_section'" t-set="page_or_question_id" t-value="page.id"/>
+            <t t-if="survey.questions_layout == 'page_per_question'" t-set="page_or_question_id" t-value="question.id"/>
+
+            <form id="survey_from" role="form" method="post" class="js_surveyform" t-att-name="survey.id"
+                  t-att-action="'/survey/fill/%s/%s' % (survey.access_token, answer.token)"
+                  t-att-data-prefill="'/survey/prefill/%s/%s?page_or_question_id=%s' % (survey.access_token, answer.token, page_or_question_id)"
+                  t-att-data-validate="'/survey/validate/%s/%s' % (survey.access_token, answer.token)"
+                  t-att-data-submit="'/survey/submit/%s/%s' % (survey.access_token, answer.token)">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <input type="hidden" name="token" t-att-value="answer.token"/>
+                <input type="hidden" id="survey_id_for_time_js" t-att-value="survey.id"/>
+
+                <t t-if="survey.questions_layout == 'one_page'">
+
+                    <t t-foreach='survey.question_and_page_ids' t-as='question'>
+                        <h2 t-if="question.is_page" t-field='question.title' class="o_survey_title"/>
+                        <t t-if="not question.is_page and question in answer.question_ids" t-call="survey.question"/>
+                    </t>
+
+                    <div class="text-center mt16 mb256">
+                        <button type="submit" class="btn btn-primary" name="button_submit" value="finish">Submit Survey</button>
+                    </div>
+                </t>
+
+                <t t-if="survey.questions_layout == 'page_per_section'">
+
+                    <h2 t-field='page.title' class="o_survey_title"/>
+                    <div t-field='page.description' class="oe_no_empty"/>
+
+                    <input type="hidden" name="page_id" t-att-value="page.id"/>
+                    <t t-foreach='page.question_ids' t-as='question'>
+                        <t t-if="question in answer.question_ids" t-call="survey.question"/>
+                    </t>
+
+                    <div class="text-center mt16 mb256">
+                        <button t-if="survey.users_can_go_back and page != survey.page_ids[0]" type="submit" class="btn btn-secondary" name="button_submit" value="previous">Previous page</button>
+                        <button t-if="not last" type="submit" class="btn btn-primary" name="button_submit" value="next">Next page</button>
+                        <button t-if="last" type="submit" class="btn btn-primary" name="button_submit" value="finish">Submit Survey</button>
+                    </div>
+                </t>
+
+                <t t-if="survey.questions_layout == 'page_per_question'">
+                    <input type="hidden" name="question_id" t-att-value="question.id"/>
+                    <input type="hidden" name="is_last_question" id="is_last_question" t-att-value="last"/>
+                    <t t-call="survey.question"/>
+
+                    <div class="text-center mt16 mb256">
+                        <button t-if="survey.users_can_go_back and question != answer.question_ids[0]" type="submit" class="btn btn-secondary" name="button_submit" value="previous">Previous question</button>
+                        <button t-if="not last" type="submit" class="btn btn-primary" name="button_submit" value="next">Next question</button>
+                        <button t-if="last" type="submit" class="btn btn-primary" name="button_submit" value="finish">Submit Survey</button>
+                    </div>
+                </t>
+            </form>
+
+            <!-- Modal used to display error message, i.c.o. ajax error -->
+            <div role="dialog" class="modal fade" id="AJAXErrorModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <header class="modal-header">
+                            <h4 class="modal-title">A problem has occured</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">&amp;times;</button>
+                        </header>
+                        <main class="modal-body">
+                            <p>Something went wrong while contacting survey server. <strong class="text-danger">Your answers have probably not been recorded.</strong> Try refreshing.
+                            </p>
+                        </main>
+                        <footer class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template id="survey.question" name="Question">
+            <t t-if="survey.questions_time_option == 'each_question'">
+                <div class="o_page_header o_survey_header">
+                    <div class="container m-0 p-0">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <h1 t-esc="survey.title"></h1>
+                            </div>
+                            <div
+                                    t-if="survey.questions_time_option == 'each_question'"
+                                    class="js_survey_timer col-lg-4"
+                                    t-att-data-timer="survey_user_input_line_time.isoformat()"
+                                    t-att-data-auto_next_ques="survey.auto_next_ques"
+                                    t-att-data-questions_time_option="survey.questions_time_option"
+                                    t-att-data-time_limit_minutes="question.time_limit">
+                                <h1 class="timer text-right">00:00</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <ol t-if="survey.questions_layout == 'page_per_section'" class="breadcrumb mt8 justify-content-end">
+                        <t t-set="can_go_back" t-value="survey.users_can_go_back"/>
+                        <t t-foreach='survey.page_ids' t-as='breadcrumb_page'>
+                            <li t-attf-class="breadcrumb-item #{'active' if breadcrumb_page == page else ''}">
+                                <t t-if="page == breadcrumb_page">
+                                    <!-- Users can only go back and not forward -->
+                                    <!-- As soon as we reach the current page, set "can_go_back" to False -->
+                                    <t t-set="can_go_back" t-value="False"/>
+                                </t>
+                                <t t-if="can_go_back">
+                                    <a t-att-href="'/survey/page/%s/%s/%s' % (survey.access_token, answer.token, breadcrumb_page.id)">
+                                        <span t-field='breadcrumb_page.title'/>
+                                    </a>
+                                </t>
+                                <t t-else="">
+                                    <span t-field='breadcrumb_page.title'/>
+                                </t>
+                            </li>
+                        </t>
+                    </ol>
+                </div>
+            </t>
+
+            <t t-set="prefix" t-value="'%s_%s' % (survey.id, question.id)"/>
+            <div class="js_question-wrapper" t-att-id="prefix">
+                <h4>
+                    <span t-field='question.question'/>
+                    <!--                    <span t-if="question.constr_mandatory" class="text-danger">*</span>-->
+                </h4>
+                <div t-field='question.description' class="text-muted oe_no_empty"/>
+                <div id="answers_div" t-if="survey.questions_time_option != 'each_question'">
+                    <t t-if="question.question_type == 'free_text'">
+                        <t t-call="survey.free_text"/>
+                    </t>
+                    <t t-if="question.question_type == 'textbox'">
+                        <t t-call="survey.textbox"/>
+                    </t>
+                    <t t-if="question.question_type == 'numerical_box'">
+                        <t t-call="survey.numerical_box"/>
+                    </t>
+                    <t t-if="question.question_type == 'date'">
+                        <t t-call="survey.date"/>
+                    </t>
+                    <t t-if="question.question_type == 'datetime'">
+                        <t t-call="survey.datetime"/>
+                    </t>
+                    <t t-if="question.question_type == 'simple_choice'">
+                        <t t-call="survey.simple_choice"/>
+                    </t>
+                    <t t-if="question.question_type == 'multiple_choice'">
+                        <t t-call="survey.multiple_choice"/>
+                    </t>
+                    <t t-if="question.question_type == 'matrix'">
+                        <t t-call="survey.matrix"/>
+                    </t>
+                </div>
+                <div id="answers_div" t-if="survey.questions_time_option == 'each_question' and not survey_user_input_line.is_time_limit_reached">
+                    <t t-if="question.question_type == 'free_text'">
+                        <t t-call="survey.free_text"/>
+                    </t>
+                    <t t-if="question.question_type == 'textbox'">
+                        <t t-call="survey.textbox"/>
+                    </t>
+                    <t t-if="question.question_type == 'numerical_box'">
+                        <t t-call="survey.numerical_box"/>
+                    </t>
+                    <t t-if="question.question_type == 'date'">
+                        <t t-call="survey.date"/>
+                    </t>
+                    <t t-if="question.question_type == 'datetime'">
+                        <t t-call="survey.datetime"/>
+                    </t>
+                    <t t-if="question.question_type == 'simple_choice'">
+                        <t t-call="survey.simple_choice"/>
+                    </t>
+                    <t t-if="question.question_type == 'multiple_choice'">
+                        <t t-call="survey.multiple_choice"/>
+                    </t>
+                    <t t-if="question.question_type == 'matrix'">
+                        <t t-call="survey.matrix"/>
+                    </t>
+                </div>
+                <div id="answers_div" t-if="survey.questions_time_option == 'each_question' and survey_user_input_line.is_time_limit_reached">
+                    <span style="color:red">Time End! Please move next.</span>
+                    <div style="display:none;">
+                        <t t-if="question.question_type == 'free_text'">
+                            <t t-call="survey.free_text"/>
+                        </t>
+                        <t t-if="question.question_type == 'textbox'">
+                            <t t-call="survey.textbox"/>
+                        </t>
+                        <t t-if="question.question_type == 'numerical_box'">
+                            <t t-call="survey.numerical_box"/>
+                        </t>
+                        <t t-if="question.question_type == 'date'">
+                            <t t-call="survey.date"/>
+                        </t>
+                        <t t-if="question.question_type == 'datetime'">
+                            <t t-call="survey.datetime"/>
+                        </t>
+                        <t t-if="question.question_type == 'simple_choice'">
+                            <t t-call="survey.simple_choice"/>
+                        </t>
+                        <t t-if="question.question_type == 'multiple_choice'">
+                            <t t-call="survey.multiple_choice"/>
+                        </t>
+                        <t t-if="question.question_type == 'matrix'">
+                            <t t-call="survey.matrix"/>
+                        </t>
+                    </div>
+                </div>
+                <div class="js_errzone alert alert-danger" style="display:none;" role="alert"></div>
+            </div>
+        </template>
+
+        <template id="survey.simple_choice" name="Simple choice">
+            <div t-if="question.display_mode == 'dropdown' and answer.token" class="js_drop row">
+                <div class="col-lg-12">
+                    <select class="form-control" t-att-name="prefix">
+                        <option disabled="1" selected="1" value="">Choose...</option>
+                        <t t-foreach='question.labels_ids' t-as='label'>
+                            <option t-att-value='label.id'>
+                                <t t-esc='label.value'/>
+                            </option>
+                        </t>
+                        <t t-if='question.comments_allowed and question.comment_count_as_answer'>
+                            <option class="js_other_option" value="-1">
+                                <span t-esc="question.comments_message"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div t-if='question.comments_allowed and question.comment_count_as_answer' class="col-lg-6">
+                    <textarea type="text" class="form-control" rows="1" t-att-name="'%s_%s' % (prefix, 'comment')" data-oe-survey-othert="1"/>
+                </div>
+                <div t-if='question.comments_allowed and not question.comment_count_as_answer' class="col-lg-12 mt16">
+                    <span t-field="question.comments_message"/>
+                    <textarea type="text" class="form-control" rows="1" t-att-name="'%s_%s' % (prefix, 'comment')"/>
+                </div>
+            </div>
+            <div t-if="question.display_mode == 'columns' or not answer.token" class="row js_radio">
+                <t t-if="question.re_arange_ans">
+                    <t t-set="answer_ids" t-value="random.sample(question.labels_ids, len(question.labels_ids))"/>
+                    <div t-foreach='answer_ids' t-as='label' t-attf-class="col-lg-#{question.column_nb}">
+                        <label t-att-class="' bg-success ' if quizz_correction and label.answer_score > 0.0 else None">
+                            <input type="radio" t-att-name="prefix" t-att-value='label.id'/>
+                            <span t-field='label.value'/>
+                            <span t-field='label.description' style="display:inline-block; max-width:210px; max-height:210px"/>
+                        </label>
+                    </div>
+                </t>
+                <t t-if="not question.re_arange_ans">
+                    <div t-foreach='question.labels_ids' t-as='label' t-attf-class="col-lg-#{question.column_nb}">
+                        <label t-att-class="' bg-success ' if quizz_correction and label.answer_score > 0.0 else None">
+                            <input type="radio" t-att-name="prefix" t-att-value='label.id'/>
+                            <span t-field='label.value'/>
+                            <span t-field='label.description' style="display:inline-block; max-width:210px; max-height:210px"/>
+                        </label>
+                    </div>
+                </t>
+                <div t-if='question.comments_allowed and question.comment_count_as_answer' class="js_comments col-lg-12">
+                    <label>
+                        <input type="radio" t-att-name="prefix" value="-1"/>
+                        <span t-field="question.comments_message"/>
+                    </label>
+                    <textarea type="text" class="form-control" rows="1" t-att-name="'%s_%s' % (prefix, 'comment')"/>
+                </div>
+                <div t-if='question.comments_allowed and not question.comment_count_as_answer' class="col-lg-12">
+                    <span t-field="question.comments_message"/>
+                    <textarea type="text" class="form-control" rows="1" t-att-name="'%s_%s' % (prefix, 'comment')" data-oe-survey-othert="1"/>
+                </div>
+            </div>
+        </template>
+
+        <template id="survey.multiple_choice" name="Multiple choice">
+            <div class="row">
+                <t t-if="question.re_arange_ans">
+                    <t t-set="answer_ids" t-value="random.sample(question.labels_ids, len(question.labels_ids))"/>
+                    <div t-foreach='answer_ids' t-as='label' t-attf-class="col-lg-#{question.column_nb}">
+                        <label t-att-class="' bg-success ' if quizz_correction and label.answer_score > 0.0 else None">
+                            <input type="checkbox" t-att-name="'%s_%s' % (prefix, label.id)" t-att-value='label.id'/>
+                            <span t-field='label.value'/>
+                            <span t-field='label.description' style="display:inline-block; max-width:210px; max-height:210px"/>
+                        </label>
+                    </div>
+                </t>
+                <t t-if="not question.re_arange_ans">
+                    <div t-foreach='question.labels_ids' t-as='label' t-attf-class="col-lg-#{question.column_nb}">
+                        <label t-att-class="' bg-success ' if quizz_correction and label.answer_score > 0.0 else None">
+                            <input type="checkbox" t-att-name="'%s_%s' % (prefix, label.id)" t-att-value='label.id'/>
+                            <span t-field='label.value'/>
+                            <span t-field='label.description' style="display:inline-block; max-width:210px; max-height:210px"/>
+                        </label>
+                    </div>
+                </t>
+                <div t-if='question.comments_allowed and question.comment_count_as_answer' class="js_ck_comments col-lg-12">
+                    <label>
+                        <input type="checkbox" t-att-name="'%s_%s' % (prefix, -1)" value="-1"/>
+                        <span t-field="question.comments_message"/>
+                    </label>
+                    <textarea type="text" class="form-control" rows="1" t-att-name="'%s_%s' % (prefix, 'comment')"/>
+                </div>
+                <div t-if='question.comments_allowed and not question.comment_count_as_answer' class="col-lg-12">
+                    <span t-field="question.comments_message"/>
+                    <textarea type="text" class="form-control" rows="1" t-att-name="'%s_%s' % (prefix, 'comment')" data-oe-survey-othert="1"/>
+                </div>
+            </div>
+        </template>
+
+    </data>
+</odoo>

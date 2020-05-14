@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+
+        <!--<template id="student_assignment_submission" name="Student Assignment Upload" inherit_id="website_slides.slide_fullscreen">
+            <xpath expr="//div[hasclass('o_wslides_slide_fs_header')]//a[hasclass('o_wslides_fs_share')]" position="after">
+                <a class="o_wslides_fs_student_assignment_submission d-flex align-items-center px-3" href="#" title="Submit Assignment" t-attf-slide_id="#{slide.id}">
+                    <i class="fa fa-edit"/>
+                    <span class="d-none d-md-inline-block ml-1">Submit Assignment</span>
+                </a>
+            </xpath>
+        </template>-->
+
+        <!--t-if="(slide.slide_type =='assignment')"-->
+        <template id="student_assignment_submission_full_screen" name="Student Assignment Upload" inherit_id="website_slides.slide_fullscreen_sidebar_category">
+            <xpath expr="//ul[hasclass('o_wslides_fs_sidebar_section_slides')]//div[position()=last()]" position="inside">
+                <ul class="list-unstyled w-100 pt-2 small" t-if="(slide.slide_type =='assignment')">
+                    <li class="pl-0 mb-1">
+                        <a class="o_wslides_fs_student_assignment_submission" href="#" title="Submit Assignment" t-attf-slide_id="#{slide.id}">
+                            <i class="fa fa-edit mr-2"/>
+                            <span>Submit Assignment</span>
+                        </a>
+                    </li>
+                </ul>
+            </xpath>
+        </template>
+
+        <template id="student_assignment_submission" name="Student Assignment Upload" inherit_id="website_slides.slide_content_detailed">
+            <xpath expr="//div[hasclass('o_wslides_lesson_content_type')]" position="before">
+                <div class="pb-2" t-if="(slide.slide_type =='assignment')">
+                    <a href="#" title="Submit Assignment" t-attf-slide_id="#{slide.id}" class="o_wslides_fs_student_assignment_submission btn btn-primary py-1 px-2">
+                        <span style="font-size:16px">Submit Assignment</span>
+                    </a>
+                </div>
+            </xpath>
+        </template>
+
+
+
+        <template id="slide_icon_inherit_aarsol_ext" inherit_id="website_slides.slide_icon">
+            <xpath expr="//i[last()]" position="after">
+                <i t-if="slide.slide_type == 'assignment'" t-att-class="'fa fa-tasks %s' % icon_class"></i>
+            </xpath>
+        </template>
+
+        <template id="course_slides_list_slide_inherit_aarsol_ext" inherit_id="website_slides.course_slides_list_slide">
+            <xpath expr="//a[hasclass('o_wslides_js_slides_list_slide_link')]" position="attributes">
+                <attribute name="t-attf-href">#{'/slides_survey/slide/get_assignment_url?slide_id=%s' %(slide.id) if slide.slide_type == 'assignment' and slide.channel_id.total_slides == 1 else '/slides/slide/%s' %(slug(slide))}</attribute>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

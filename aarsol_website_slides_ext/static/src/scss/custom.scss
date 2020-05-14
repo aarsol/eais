@@ -1,0 +1,62 @@
+
+// Readonly display
+.aarsol_portal_chatter {
+    padding: 10px;
+
+    .aarsol_portal_chatter_avatar {
+        width: 45px;
+        height: 45px;
+        margin-right: 1rem;
+    }
+
+    .aarsol_portal_chatter_header {
+        margin-bottom: 15px;
+    }
+
+    .aarsol_portal_chatter_composer {
+        margin-bottom: 15px;
+    }
+
+    .aarsol_portal_chatter_messages {
+        margin-bottom: 15px;
+
+        .aarsol_portal_chatter_message {
+            div.media-body > p:not(.aarsol_portal_chatter_puslished_date):last-of-type {
+                margin-bottom: 5px;
+            }
+        }
+
+        .aarsol_portal_chatter_message_title {
+            p {
+                font-size:85%;
+                color:$o-main-color-muted;
+                margin: 0px;
+            }
+        }
+    }
+
+    .aarsol_portal_chatter_pager {
+        text-align: center;
+    }
+
+
+}
+
+// Readonly / Composer mix display
+.aarsol_portal_chatter,
+.aarsol_portal_chatter_composer {
+    .aarsol_portal_chatter_attachment {
+        .aarsol_portal_chatter_attachment_name {
+            word-wrap: break-word;
+        }
+
+        .aarsol_portal_chatter_attachment_delete {
+            @include o-position-absolute($top: 0, $right: 0);
+            opacity: 0;
+        }
+
+        &:hover .aarsol_portal_chatter_attachment_delete {
+            opacity: 1;
+        }
+    }
+}

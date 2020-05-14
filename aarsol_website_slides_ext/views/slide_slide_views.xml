@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- SLIDE.SLIDE -->
+        <record id="view_slide_slide_form_inherit" model="ir.ui.view">
+            <field name="name">slide.slide.form.inherit</field>
+            <field name="model">slide.slide</field>
+            <field name="inherit_id" ref="website_slides.view_slide_slide_form"/>
+            <field name="arch" type="xml">
+                <field name="datas" position="replace">
+                    <field name="datas" string="Attachment"
+                           attrs="{'invisible': [('slide_type', 'not in', ('assignment','document', 'presentation'))]}"/>
+                </field>
+
+                <field name="url" position="after">
+                    <field name="is_live" string="Is live Session"
+                           attrs="{'invisible': [('slide_type', 'not in', ('video'))], 'required': [('slide_type', '=', 'video')] }"/>
+                    <field name="attendance_required" string="Attendance Required?"
+                           attrs="{'invisible': ['|',('slide_type', 'not in', ('video')),('is_live', '=', False)]}"/>
+                    <field name="live_time_start" string="Session Start Time"
+                           attrs="{'invisible': ['|',('slide_type', 'not in', ('video')),('is_live', '=', False)], 'required': [('slide_type', '=', 'video'),('is_live', '=', True)] }"/>
+                    <field name="live_time_end" string="Session End Time"
+                           attrs="{'invisible': ['|',('slide_type', 'not in', ('video')),('is_live', '=', False)], 'required': [('slide_type', '=', 'video'),('is_live', '=', True)] }"/>
+                </field>
+
+                <xpath expr="//field[@name='is_published']" position="before">
+                    <button name="action_publish"
+                            type="object"
+                            icon="fa-globe"
+                            class="oe_stat_button text-danger"
+                            groups="website.group_website_publisher"
+                            string="Publish"
+                            attrs="{'invisible': [('is_published', '=', True)]}">
+                    </button>
+                    <button name="action_private"
+                            type="object"
+                            icon="fa-globe"
+                            class="oe_stat_button"
+                            groups="website.group_website_publisher"
+                            string="Private"
+                            attrs="{'invisible': [('is_published', '=', False)]}">
+                    </button>
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <record id="view_slide_slide_form_inherit2" model="ir.ui.view">
+            <field name="name">slide.slide.form.inherit2</field>
+            <field name="model">slide.slide</field>
+            <field name="inherit_id" ref="website_slides_survey.slide_slide_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='survey_id']" position="replace">
+                    <field name="survey_id"
+                           attrs="{'invisible': [('slide_type', '!=', 'certification')], 'required': [('slide_type', '=', 'certification')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="view_slide_slide_partner_form" model="ir.ui.view">
+            <field name="name">slide.slide.partner.form</field>
+            <field name="model">slide.slide.partner</field>
+            <field name="arch" type="xml">
+                <form string="Lesson">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="channel_id"/>
+                                <field name="slide_id"/>
+                                <field name="partner_id"/>
+                            </group>
+                            <group>
+                                <field name="assignment_file"/>
+                                <field name="submission_date"/>
+                                <field name="can_submit"/>
+                            </group>
+                            <group>
+                                <field name="completed"/>
+                                <field name="vote"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Comments" name="comments">
+                                <field name="comments_ids">
+                                    <tree create="false" edit="false" delete="false">
+                                        <field name="slide_id"/>
+                                        <field name="channel_id"/>
+                                        <field name="comment"/>
+                                        <field name="comment_time"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_slide_slide_partner_tree" model="ir.ui.view">
+            <field name="name">slide.slide.partner.tree</field>
+            <field name="model">slide.slide.partner</field>
+            <field name="arch" type="xml">
+                <tree string="Slide Partner">
+                    <field name="channel_id"/>
+                    <field name="slide_id"/>
+                    <field name="partner_id"/>
+                    <field name="assignment_file"/>
+                    <field name="submission_date"/>
+                    <field name="can_submit"/>
+                    <field name="completed"/>
+                    <field name="vote"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="slide_slide_partner_action" model="ir.actions.act_window">
+            <field name="name">Contents Attendees</field>
+            <field name="res_model">slide.slide.partner</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Add a new Partner
+                </p>
+            </field>
+        </record>
+
+        <menuitem
+                id="menu_slide_slide_partner"
+                name="Content Attendees"
+                action="slide_slide_partner_action"
+                parent="website_slides.website_slides_menu_courses"
+                sequence="10"
+        />
+
+
+    </data>
+</odoo>

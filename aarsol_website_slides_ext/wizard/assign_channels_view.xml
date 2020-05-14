@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_slides_assign_channel_wiz_form" model="ir.ui.view">
+            <field name="name">slide.assign.channel.wiz.form</field>
+            <field name="model">slide.assign.channel.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Assign Channel">
+                    <sheet>
+                        <!--<group>
+                            <group>
+                                <field name="function" required="1"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>-->
+                        <notebook>
+                            <page string="Classes">
+                                <group>
+                                    <field name="channel_ids" colspan="4" nolabel="1">
+                                        <tree string="Student Classes">
+                                            <field name="name"/>
+                                            <field name="channel_type"/>
+                                            <field name="visibility"/>
+                                            <field name="enroll"/>
+                                            <field name="user_id"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Students">
+                                <group>
+                                    <field name="partner_ids" colspan="4" nolabel="1">
+                                        <tree string="Students">
+                                            <field name="name"/>
+                                            <field name="email"/>
+                                            <field name="mobile"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <footer>
+                        <button name="assign_channels" string="Assign Course" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_slide_assign_channel_wiz" model="ir.actions.act_window">
+            <field name="name">Assign Course</field>
+            <field name="res_model">slide.assign.channel.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem
+                id="menu_slide_assign_channel"
+                name="Assign Courses"
+                action="action_slide_assign_channel_wiz"
+                parent="menu_slide_imports"
+                sequence="10"
+        />
+
+
+    </data>
+</odoo>
