@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- QUESTIONS -->
+        <record model="ir.ui.view" id="survey_question_form_inherit">
+            <field name="name">Form view for survey question inherit</field>
+            <field name="model">survey.question</field>
+            <field name="inherit_id" ref="survey.survey_question_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook[1]" position="inside" attrs="{'invisible': [('is_page', '=', True)]}">
+                    <page name='description' string="Description">
+                        <field name="description" widget="html"/>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='title']" position="after">
+                    <field name="questions_time_option" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//field[@name='constr_mandatory']" position="after">
+                    <div>
+                        <label for="time_limit" string="Time Limit"/>
+                        <field name="time_limit" widget="float_time" class="oe_inline"/>
+                        <span>minutes</span>
+                    </div>
+                </xpath>
+
+                <xpath expr="//field[@name='comments_allowed']" position="before">
+                    <field name="re_arange_ans"/>
+                </xpath>
+
+
+                <xpath expr="//field[@name='random_questions_count']" position="after">
+                    <field name="ques_time_limit" attrs="{'column_invisible': [('questions_time_option', '!=', 'each_question')], 'invisible': [('is_page', '=', False)]}"/>
+                </xpath>
+
+
+                <!--<xpath expr="//field[@name ='labels_ids']//field[@name ='value']" position="after">
+                    <field name="description" widget="html"/>
+                </xpath>-->
+
+                <xpath expr="//field[@name ='labels_ids']" position="replace">
+                    <field name="labels_ids" string="Type of answers" context="{'default_question_id': active_id}" attrs="{'invisible': [('question_type', 'not in', ['simple_choice', 'multiple_choice', 'matrix'])]}">
+                        <tree editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="value" string="Choices"/>
+                            <!--                            <field name="description" widget="html"/>-->
+                            <field name="is_correct" attrs="{'column_invisible': ['|', ('parent.scoring_type', '=', 'no_scoring'), ('parent.question_type', '=', 'matrix')]}"/>
+                            <field name="answer_score" attrs="{'column_invisible': ['|', ('parent.scoring_type', '=', 'no_scoring'), ('parent.question_type', '=', 'matrix')]}"/>
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="survey_label_form">
+            <field name="name">Form view for survey label</field>
+            <field name="model">survey.label</field>
+            <field name="arch" type="xml">
+                <form string="Answer">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="question_id" readonly="1"/>
+                                <field name="value"/>
+                            </group>
+                            <group>
+                                <field name="is_correct"/>
+                                <field name="answer_score"/>
+                            </group>
+                            <label for="description"/>
+                            <field name="description" widget="html"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

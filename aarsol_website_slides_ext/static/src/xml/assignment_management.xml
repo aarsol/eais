@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="slides.slide.archive">
+        <div>
+            <p>Are you sure you want to archive this slide ?</p>
+        </div>
+    </t>
+
+     <!--<t t-name="slides.category.add">
+        <div>
+            <form action="/slides/category/add" method="POST" id="slide_category_add_form">
+                <input type="hidden" name="csrf_token" t-att-value="csrf_token"/>
+                <input type="hidden" name="channel_id" t-att-value="widget.channelId"/>
+                <div class="form-group row">
+                    <label for="section_name" class="col-sm-3 col-form-label">Section name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="name" id="section_name" required="required"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </t>-->
+
+    <t t-name="aarsol.website.assignment.submit.modal.common">
+        <div class="form-group">
+            <label for="name" class="col-form-label">Title</label>
+            <input id="name" name="name" placeholder="Title" class="form-control" required="required"/>
+        </div>
+        <div class="form-group">
+            <label for="duration" class="col-form-label">Duration</label>
+            <div class="input-group">
+                <input type="number" id="duration" name="duration" placeholder="Estimated slide completion time" class="form-control" readonly="true"/>
+                    <div class="input-group-prepend">
+                    <span class="input-group-text">Minutes</span>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="student.assignment.submission.modal">
+        <div>
+            <form class="clearfix" action="/student/submit/assignment" method="POST" id="student_assignment_submission_form">
+                <input type="hidden" name="csrf_token" t-att-value="csrf_token"/>
+                <input type="hidden" id="slide_id" name="slide_id" t-att-value="widget.slideId"/>
+                <div class="row">
+                    <div id="o_wslides_js_slide_upload_left_column" class="col">
+                        <div class="form-group">
+                            <label for="upload" class="col-form-label">Choose a PDF or an Image</label>
+                            <input id="upload" name="file" class="form-control" accept="image/*,application/pdf" type="file" required="required"/>
+                        </div>
+                        <canvas id="data_canvas" class="d-none"></canvas>
+                        <t t-call="aarsol.website.assignment.submit.modal.common"/>
+                    </div>
+                    <div id="o_wslides_js_slide_upload_preview_column" class="col-md-6 d-none">
+                        <div class="img-thumbnail">
+                            <div class="o_slide_preview">
+                                <img src="/website_slides/static/src/img/document.png" id="slide-image" title="Content Preview" alt="Content Preview" class="img-fluid"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+<!--        this is for normal screen slides view-->
+        <!--<template id="slide_content_detailed" inherit_id="website_slides.slide_content_detailed">
+            <xpath expr="//div[hasclass('o_wslides_lesson_content_type')]" position="inside">
+                <div t-if="slide.slide_type in ('assignment')" class="embed-responsive embed-responsive-4by3 embed-responsive-item mb8" style="height: 600px;">
+                    <t t-raw="slide.embed_code"/>
+                </div>
+            </xpath>
+        </template>-->
+    </data>
+</odoo>

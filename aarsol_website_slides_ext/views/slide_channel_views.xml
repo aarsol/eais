@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_slide_channel_form_inherit" model="ir.ui.view">
+            <field name="name">slide.channel.view.form.inherit</field>
+            <field name="model">slide.channel</field>
+            <field name="inherit_id" ref="website_slides.view_slide_channel_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_redirect_to_done_members']" position="before">
+                    <button name="action_publish"
+                                type="object"
+                                icon="fa-globe"
+                                class="oe_stat_button text-danger"
+                                groups="website.group_website_publisher"
+                                string="Publish"
+                                attrs="{'invisible': [('is_published', '=', True)]}">
+                            </button>
+                    <button name="action_private"
+                                type="object"
+                                icon="fa-globe"
+                                class="oe_stat_button"
+                                groups="website.group_website_publisher"
+                                string="Private"
+                                attrs="{'invisible': [('is_published', '=', False)]}">
+                            </button>
+                </xpath>
+                <xpath expr="//field[@name='nbr_webpage']" position="after">
+                    <field name="nbr_assignment" string="Assignments"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="slide_channel_view_search_inherit" model="ir.ui.view">
+            <field name="name">slide.channel.view.search.inherit</field>
+            <field name="model">slide.channel</field>
+            <field name="inherit_id" ref="website_slides.slide_channel_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="tag_ids" string="Tags"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
