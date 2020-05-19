@@ -38,6 +38,7 @@ class Survey(http.Controller):
                 ('survey_id', '=', survey_sudo.id),
                 ('token', '=', answer_token)
             ], limit=1)
+
         return survey_sudo, answer_sudo
 
     def _check_validity(self, survey_token, answer_token, ensure_token=True):
@@ -97,7 +98,6 @@ class Survey(http.Controller):
         """
         survey_sudo, answer_sudo = request.env['survey.survey'].sudo(), request.env['survey.user_input'].sudo()
         has_survey_access, can_answer = False, False
-
         validity_code = self._check_validity(survey_token, answer_token, ensure_token=ensure_token)
         if validity_code != 'survey_wrong':
             survey_sudo, answer_sudo = self._fetch_from_access_token(survey_token, answer_token)
@@ -142,6 +142,9 @@ class Survey(http.Controller):
         elif error_key == 'answer_deadline' and answer_sudo.token:
             return request.render("survey.survey_expired", {'survey': survey_sudo})
         elif error_key == 'answer_done' and answer_sudo.token:
+            if answer_sudo.state == 'done' and answer_sudo.slide_id.allow_after_completion:
+                answer_sudo.state = 'new'
+                answer_sudo.start_datetime = fields.Datetime.now()
             return request.render("survey.sfinished", self._prepare_survey_finished_values(survey_sudo, answer_sudo, token=answer_sudo.token))
 
         return werkzeug.utils.redirect("/")
@@ -259,7 +262,7 @@ class Survey(http.Controller):
     def survey_display_page(self, survey_token, answer_token, prev=None, **post):
 
         access_data = self._get_access_data(survey_token, answer_token, ensure_token=True)
-        if access_data['validity_code'] is not True:
+        if access_data['validity_code'] is not True and not access_data['answer_sudo'].slide_id.allow_after_completion:
             return self._redirect_with_error(access_data, access_data['validity_code'])
 
         survey_sudo, answer_sudo = access_data['survey_sudo'], access_data['answer_sudo']

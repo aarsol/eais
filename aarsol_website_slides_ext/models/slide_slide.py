@@ -20,6 +20,8 @@ class Slide(models.Model):
     live_time_end = fields.Datetime("Live Session End?")
     attendance_required = fields.Boolean("Must Attend?", default=False)
 
+    allow_after_completion = fields.Boolean("Allow After Completion", help='Allow for survery even survery is passed by applicant')
+
     @api.depends('document_id', 'slide_type', 'mime_type')
     def _compute_embed_code(self):
         base_url = request and request.httprequest.url_root or self.env['ir.config_parameter'].sudo().get_param('web.base.url')
@@ -44,6 +46,48 @@ class Slide(models.Model):
 
     def action_private(self):
         self.is_published = False
+
+
+    def _generate_certification_url(self):
+        """ get a map of certification url for certification slide from `self`. The url will come from the survey user input:
+                1/ existing and not done user_input for member of the course
+                2/ create a new user_input for member
+                3/ for no member, a test user_input is created and the url is returned
+            Note: the slide.slides.partner should already exist
+
+            We have to generate a new invite_token to differentiate pools of attempts since the
+            course can be enrolled multiple times.
+        """
+        certification_urls = {}
+        for slide in self.filtered(lambda slide: slide.slide_type == 'certification' and slide.survey_id):
+            if slide.channel_id.is_member:
+                user_membership_id_sudo = slide.user_membership_id.sudo()
+                if user_membership_id_sudo.user_input_ids:
+                    last_user_input = next(user_input for user_input in user_membership_id_sudo.user_input_ids.sorted(
+                        lambda user_input: user_input.create_date, reverse=True
+                    ))
+                    certification_urls[slide.id] = last_user_input._get_survey_url()
+                else:
+                    user_input = slide.survey_id.sudo()._create_answer(
+                        partner=self.env.user.partner_id,
+                        check_attempts=False,
+                        **{
+                            'slide_id': slide.id,
+                            'slide_partner_id': user_membership_id_sudo.id
+                        },
+                        invite_token=self.env['survey.user_input']._generate_invite_token()
+                    )
+                    certification_urls[slide.id] = user_input._get_survey_url()
+            else:
+                user_input = slide.survey_id.sudo()._create_answer(
+                    partner=self.env.user.partner_id,
+                    check_attempts=False,
+                    test_entry=True, **{
+                        'slide_id': slide.id
+                    }
+                )
+                certification_urls[slide.id] = user_input._get_survey_url()
+        return certification_urls
 
 
 class SlidePartnerRelation(models.Model):

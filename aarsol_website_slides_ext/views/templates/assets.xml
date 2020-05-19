@@ -24,7 +24,7 @@
                  <script type="text/javascript" src="/aarsol_website_slides_ext/static/src/js/slides_slide_toggle_is_preview.js"/>-->
 
                 <script type="text/javascript" src="/aarsol_website_slides_ext/static/src/js/slides_assignment_submission.js"/>
-                <!--                <script type="text/javascript" src="/aarsol_website_slides_ext/static/src/js/slides_course_fullscreen_player.js"/>-->
+                <script type="text/javascript" src="/aarsol_website_slides_ext/static/src/js/slides_course_fullscreen_player.js"/>
 
                 <!--               <script type="text/javascript" src="/aarsol_website_slides_ext/static/src/js/slides_course_join.js"/>-->
                 <script type="text/javascript" src="/aarsol_website_slides_ext/static/src/js/slides_course_quiz.js"/>

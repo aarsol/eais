@@ -175,7 +175,7 @@
                         <!-- Training Content -->
                         <div class="col-12 col-md-8 col-lg-9">
                             <ul class="nav nav-tabs o_wslides_nav_tabs flex-nowrap" role="tablist" id="profile_extra_info_tablist">
-                                <li class="nav-item">
+                                <li class="nav-item o_wslides_course_header_nav_home_training">
                                     <a t-att-class="'nav-link %s' % ('active' if active_tab == 'home' else '')"
                                         id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home"
                                         t-att-aria-selected="'true' if active_tab == 'home' else 'false'">
@@ -231,7 +231,7 @@
                         <div class="row">
                             <div class="col-12 col-md-8 offset-md-4 col-lg-9 offset-lg-3">
                                 <ul class="nav nav-tabs o_wslides_nav_tabs o_wslides_doc_nav_tabs flex-nowrap" role="tablist" id="profile_extra_info_tablist">
-                                    <li class="nav-item">
+                                    <li class="nav-item o_wslides_course_header_nav_home_documentation">
                                         <a t-att-class="'nav-link %s' % ('active' if active_tab == 'home' else '')"
                                             id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home"
                                             t-att-aria-selected="'true' if active_tab == 'home' else 'false'">
