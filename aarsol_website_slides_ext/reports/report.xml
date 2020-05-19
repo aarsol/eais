@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+		<!-- CLO Attainment Summary -->
+		<report
+			id="action_report_slide_survey_attendees"
+			string="Slide Survey Attendees"
+			model="slide.channel.partner"
+			report_type="qweb-html"
+			name="aarsol_website_slides_ext.slide_survey_attendees_report"
+			file="aarsol_website_slides_ext.slide_survey_attendees_report"
+			menu="False"
+		/>
+	</data>
+</odoo>
