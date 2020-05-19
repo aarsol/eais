@@ -29,7 +29,6 @@
                 </xpath>
             </field>
         </record>
-
         <record id="slide_channel_view_search_inherit" model="ir.ui.view">
             <field name="name">slide.channel.view.search.inherit</field>
             <field name="model">slide.channel</field>
@@ -40,5 +39,32 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="slide_channel_partner_view_tree_inherit" model="ir.ui.view">
+            <field name="name">slide.channel.partner.tree.inherit</field>
+            <field name="model">slide.channel.partner</field>
+            <field name="inherit_id" ref="website_slides.slide_channel_partner_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_email']" position="after">
+                    <field name="ref" string="College/Section"/>
+                    <field name="function" string="Class/Grade"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="slide_channel_partner_view_search_inherit" model="ir.ui.view">
+            <field name="name">slide.channel.partner.search.inherit</field>
+            <field name="model">slide.channel.partner</field>
+            <field name="inherit_id" ref="website_slides.slide_channel_partner_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='channel_id']" position='after'>
+                    <group expand="0" string="Group By">
+                        <filter string="College/Section" name="groupby_ref" domain="[]" context="{'group_by': 'ref'}"/>
+                        <filter string="Class/Grade" name="groupby_function" domain="[]" context="{'group_by': 'function'}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>

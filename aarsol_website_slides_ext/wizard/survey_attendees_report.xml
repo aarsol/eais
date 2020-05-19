@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_slide_survey_attendees_wiz_form" model="ir.ui.view">
+            <field name="name">slide.survey.attendees.wiz.form</field>
+            <field name="model">slide.survey.attendees.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Paper Attendees">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="channel_id" required="1"/>
+                                <field name="slide_id" required="1" domain="[('channel_id','=',channel_id),('slide_type','=','certification')]"/>
+                                <field name="type" required="1"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="print_report" string="Generate Report" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_slide_survey_attendees_wiz" model="ir.actions.act_window">
+            <field name="name">Get Students</field>
+            <field name="res_model">slide.survey.attendees.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem
+                id="menu_slide_assign_channel"
+                name="Paper Attendees Detail"
+                action="action_slide_survey_attendees_wiz"
+                parent="website_slides.website_slides_menu_report"
+                sequence="10"
+        />
+
+
+    </data>
+</odoo>

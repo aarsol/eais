@@ -97,6 +97,7 @@
                     t-att-data-has-question="1 if slide.question_ids else 0"
                     t-att-data-is-quiz="0"
                     t-att-data-completed="1 if slide_completed else 0"
+                    t-att-data-allow_after_completion="1 if slide.allow_after_completion else 0"
                     t-att-data-embed-code="slide.embed_code if slide.slide_type in ['assignment','video', 'document', 'presentation', 'infographic'] else False"
                     t-att-data-is-member="is_member"
                     t-att-data-session-answers="session_answers">

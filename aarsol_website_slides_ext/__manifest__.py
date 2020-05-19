@@ -19,14 +19,14 @@ Featuring
  * Filter and Tag
  * Statistics
 """,
-    'depends': ['website_slides','survey','website_slides_survey'],
+    'depends': ['website_slides', 'survey', 'website_slides_survey'],
     'data': [
 
         'views/templates/assets.xml',
         'views/templates/website_slides_templates_homepage.xml',
         'views/templates/website_slides_templates_course.xml',
         'views/templates/website_slides_templates_course_inherit.xml',
-        'views/templates/website_slides_templates_lesson.xml', #this is for normal screen slides view
+        'views/templates/website_slides_templates_lesson.xml',  # this is for normal screen slides view
         # 'views/templates/website_slides_templates_lesson_inherit.xml', #this is for normal screen slides view
         'views/templates/website_slides_templates_lesson_embed.xml',
         'views/templates/website_slides_templates_lesson_fullscreen.xml',
@@ -43,6 +43,10 @@ Featuring
         'views/survey_survey_views.xml',
 
         'wizard/assign_channels_view.xml',
+        'wizard/survey_attendees_report.xml',
+
+        'reports/report.xml',
+        'reports/slide_survey_attendees_report.xml',
 
         'security/ir.model.access.csv',
 

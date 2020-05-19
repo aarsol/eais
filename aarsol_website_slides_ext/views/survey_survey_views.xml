@@ -16,13 +16,13 @@
                         <label for="is_time_limited" string="Time Limit"/>
                         <div>
                             <field name="is_time_limited" nolabel="1"/>
-                            <field name="questions_time_option" widget="radio" attrs="{'invisible': [('is_time_limited', '=', False)]}" />
+                            <field name="questions_time_option" widget="radio" attrs="{'invisible': [('is_time_limited', '=', False)]}"/>
 
                             <field name="time_limit" widget="float_time" attrs="{'invisible': ['|',('is_time_limited', '=', False),('questions_time_option', '=', 'each_question')]}" nolabel="1" class="oe_inline"/>
                             <span attrs="{'invisible': ['|',('is_time_limited', '=', False),('questions_time_option', '=', 'each_question')]}">minutes</span>
                         </div>
-                        <field name="auto_next_ques" attrs="{'invisible': [('questions_time_option', '!=', 'each_question')]}" />
-                        <field name="time_from_section" attrs="{'invisible': [('questions_time_option', '!=', 'each_question')]}" />
+                        <field name="auto_next_ques" attrs="{'invisible': [('questions_time_option', '!=', 'each_question')]}"/>
+                        <field name="time_from_section" attrs="{'invisible': [('questions_time_option', '!=', 'each_question')]}"/>
                         <field name="questions_selection" widget="radio"/>
                         <field name="users_can_go_back" string="Back Button" attrs="{'invisible': [('questions_layout', '=', 'one_page')]}"/>
                     </group>

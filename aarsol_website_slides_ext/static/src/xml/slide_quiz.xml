@@ -14,7 +14,7 @@
                         <span t-esc="question.question"/>
                     </div>
                     <div class="list-group">
-                        <t t-foreach="question.answers" t-as="answer">   <!--<t t-foreach="question.answer_ids" t-as="answer">-->
+                        <!--<t t-foreach="question.answers" t-as="answer">-->   <t t-foreach="question.answer_ids" t-as="answer">
                             <a t-att-data-answer-id="answer.id" href="#"
                                t-att-data-text="answer.text_value"
                                t-attf-class="o_wslides_quiz_answer list-group-item d-flex align-items-center list-group-item-action #{widget.slide.completed  &amp;&amp; answer.is_correct ? 'list-group-item-success' : '' }">
@@ -111,7 +111,8 @@
     </t>
 
     <t t-extend="slide.slide.quiz.finish">
-        <t t-jquery="div[class* = 'o_wslides_quiz_modal']" t-operation="replace">
+        <!--<t t-jquery="div[class* = 'o_wslides_quiz_modal']" t-operation="replace">-->
+        <t t-jquery=".o_wslides_quiz_modal" t-operation="replace">
             <div class="modal o_wslides_quiz_modal pt-5" tabindex="-1" role="dialog" id="slides_quiz_modal">
             <div class="modal-backdrop show bg-white" style="z-index:0"/>
             <div class="modal-dialog mt-5" role="document">

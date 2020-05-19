@@ -40,7 +40,7 @@
 
                 <xpath expr="//field[@name ='labels_ids']" position="replace">
                     <field name="labels_ids" string="Type of answers" context="{'default_question_id': active_id}" attrs="{'invisible': [('question_type', 'not in', ['simple_choice', 'multiple_choice', 'matrix'])]}">
-                        <tree editable="bottom">
+                        <tree >
                             <field name="sequence" widget="handle"/>
                             <field name="value" string="Choices"/>
                             <!--                            <field name="description" widget="html"/>-->

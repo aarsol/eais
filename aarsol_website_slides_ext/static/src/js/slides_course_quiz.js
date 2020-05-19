@@ -241,7 +241,8 @@ odoo.define('aarsol_website_slides_ext.quiz.ext', function (require) {
             this.$('.o_wslides_js_lesson_quiz_question').each(function () {
                 var $question = $(this);
                 var questionId = $question.data('questionId');
-                var isCorrect = self.quiz.answers[questionId].is_correct;
+                /*var isCorrect = self.quiz.answers[questionId].is_correct;*/
+                var isCorrect = self.quiz.answer_ids[questionId].is_correct;
                 $question.find('a.o_wslides_quiz_answer').each(function () {
                     var $answer = $(this);
                     $answer.find('i.fa').addClass('d-none');
@@ -358,7 +359,7 @@ odoo.define('aarsol_website_slides_ext.quiz.ext', function (require) {
             }).then(function (data) {
                 if (data.error) {
                     self._alertShow(data.error);
-                } else {
+                /*} else {
                     self.quiz = _.extend(self.quiz, data);
                     if (data.completed) {
                         self._disableAnswers();
@@ -371,7 +372,16 @@ odoo.define('aarsol_website_slides_ext.quiz.ext', function (require) {
                         self.trigger_up('slide_completed', {slide: self.slide, completion: data.channel_completion});
                     }
                     self._hideEditOptions();
-                    self._renderAnswersHighlightingAndComments();
+                    self._renderValidationInfo();
+                }*/
+                } else {
+                    self.quiz = _.extend(self.quiz, data);
+                    if (data.completed) {
+                        self._renderSuccessModal(data);
+                        self.slide.completed = true;
+                        self.trigger_up('slide_completed', {slide: self.slide, completion: data.channel_completion});
+                    }
+                    self._renderAnswersHighlighting();
                     self._renderValidationInfo();
                 }
             });

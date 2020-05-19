@@ -16,3 +16,10 @@ class Channel(models.Model):
 
     def action_private(self):
         self.is_published = False
+
+
+class ChannelUsersRelation(models.Model):
+    _inherit = 'slide.channel.partner'
+
+    ref = fields.Char('College/Section', related='partner_id.ref', store=True)
+    function = fields.Char('Class/Grade', related='partner_id.function', store=True)

@@ -2,3 +2,4 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from . import assign_channels
+from . import survey_attendees_report

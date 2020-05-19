@@ -1,12 +1,39 @@
 <templates id="template" xml:space="preserve">
 
-    <t t-extend="website.slides.fullscreen.content">
-        <t t-jquery="t[t-if*='_.contains(['document', 'presentation'], widget.get('slide').type)']" t-operation="replace">
-            <t t-if="_.contains(['assignment','document', 'presentation'], widget.get('slide').type)">
+    <t t-name="website.slides.fullscreen.content2">
+        <t t-if="_.contains(['assignment'], widget.get('slide').type)">
             <div class="embed-responsive h-100">
-                <iframe t-att-src="widget.get('slide').embedUrl" class="o_wslides_iframe_viewer" allowFullScreen="false" frameborder="0"/>
+                <iframe t-att-src="widget.get('slide').embedUrl" class="o_wslides_iframe_viewer" allowFullScreen="true" frameborder="0"/>
             </div>
         </t>
-        </t>
     </t>
+
+    <t t-name="website.slides.fullscreen.certification2">
+<!--        <t t-jquery=".justify-content-center" t-operation="replace">-->
+            <div class="justify-content-center align-self-center">
+                <div t-if="widget.get('slide').type === 'certification' &amp;&amp; !widget.get('slide').completed" class="">
+                    <a class="btn btn-primary" t-att-href="'/slides_survey/slide/get_certification_url?slide_id=' + widget.get('slide').id" target="_blank">
+                        <i class="fa fa-trophy"/>
+                        <span t-if="widget.get('slide').isMember">Pass Certification</span>
+                        <span t-else="">Test Certification</span>
+                    </a>
+                </div>
+
+                <div t-if="widget.get('slide').type === 'certification' &amp;&amp; widget.get('slide').allow_after_completion &amp;&amp; widget.get('slide').completed" class="">
+                    <a class="btn btn-primary" t-att-href="'/slides_survey/slide/get_certification_url?slide_id=' + widget.get('slide').id" target="_blank" style="margin-bottom:5px">
+                        <i class="fa fa-trophy"/>
+                        <span t-if="widget.get('slide').isMember">Try Again or See Result</span>
+                        <span t-else="">Try test Again</span>
+                    </a>
+                </div>
+
+                <div class="" t-if="widget.get('slide').type === 'certification' &amp;&amp; widget.get('slide').completed">
+                    <a role="button" class="btn btn-primary" t-att-href="'/survey/' + widget.get('slide').certificationId + '/get_certification'">
+                        <i class="fa fa-fw fa-trophy" role="img" aria-label="Download certification" title="Download certification"/>Download certification
+                    </a>
+                </div>
+            </div>
+<!--        </t>-->
+    </t>
+
 </templates>
